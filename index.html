@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Riwayat Karyawan </title>
+    <title>Sistem Riwayat Karyawan Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -21,19 +21,54 @@
         .luxury-shadow {
             box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.05);
         }
+        /* Mengaburkan konten utama sebelum login sukses */
+        .blur-content {
+            filter: blur(8px);
+            pointer-events: none;
+            user-select: none;
+        }
     </style>
 </head>
-<body class="min-h-screen text-slate-800 p-4 md:p-8">
+<body class="min-h-screen text-slate-800 p-4 md:p-8 relative">
 
-    <div class="max-w-6xl mx-auto">
+    <div id="gatekeeper-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/10 backdrop-blur-xl transition-all duration-500">
+        <div class="bg-white rounded-2xl p-8 max-w-sm w-full border border-slate-200/80 shadow-2xl text-center">
+            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4 border border-blue-100 shadow-sm">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h2 class="text-xl font-bold text-slate-900 tracking-tight">Otentikasi Diperlukan</h2>
+            <p class="text-xs text-slate-500 mt-1 mb-6 font-medium">Masukkan kode keamanan untuk mengakses HR Portal</p>
+            
+            <div class="relative mb-4">
+                <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input 
+                    type="password" 
+                    id="gatekeeper-code" 
+                    placeholder="Masukkan kode akses..." 
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-center font-mono text-slate-800 tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                    onkeypress="checkEnter(event)"
+                >
+            </div>
+            
+            <p id="error-message" class="text-xs font-semibold text-red-500 mb-4 hidden">
+                <i class="fa-solid fa-circle-exclamation mr-1"></i> Kode akses salah, silakan coba lagi.
+            </p>
+
+            <button onclick="verifyCode()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-3 rounded-xl shadow-lg shadow-blue-500/10 transition-all">
+                Buka Akses Portal
+            </button>
+        </div>
+    </div>
+
+    <div id="main-portal-content" class="max-w-6xl mx-auto blur-content transition-all duration-700">
         <header class="mb-10 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
                 <h1 class="text-3xl md:text-4xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-900">
-                    <i class="fa-solid fa-id-card-clip mr-2 text-blue-600"></i>HR Portal Cek
+                    <i class="fa-solid fa-id-card-clip mr-2 text-blue-600"></i>HR Portal
                 </h1>
-                <p class="text-sm text-slate-500 mt-1 font-medium tracking-wide">Manajemen & Pencarian Riwayat Karyawan KSP CU Semarong</p>
+                <p class="text-sm text-slate-500 mt-1 font-medium tracking-wide">Manajemen & Pencarian Riwayat Karyawan Eksekutif</p>
             </div>
-            <div id="connection-status" class="text-xs font-semibold px-4 py-2 rounded-full bg-amber-50 text-amber-600 border border-amber-200 shadow-sm flex items-center gap-2 transition-all duration-500">
+            <div id="connection-status" class="text-xs font-semibold px-4 py-2 rounded-full bg-amber-50 text-amber-600 border border-amber-200 shadow-sm flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> Connecting to Firebase...
             </div>
         </header>
@@ -81,9 +116,37 @@
 
     <script>
         const firebaseURL = "https://karyawan-3a1e8-default-rtdb.firebaseio.com/riwayat_karyawan.json"; 
-
         let allEmployees = [];
 
+        // --- SISTEM LOGIN / GATEKEEPER ---
+        function verifyCode() {
+            const inputCode = document.getElementById('gatekeeper-code').value;
+            const correctCode = "smg99"; // <-- KODE AKSES ANDA
+            const overlay = document.getElementById('gatekeeper-overlay');
+            const mainContent = document.getElementById('main-portal-content');
+            const errorMsg = document.getElementById('error-message');
+
+            if(inputCode === correctCode) {
+                // Efek transisi menutup form login
+                overlay.classList.add('opacity-0', 'invisible', 'scale-95');
+                mainContent.classList.remove('blur-content');
+                
+                // Baru mulai mengambil data dari Firebase setelah login berhasil
+                fetchEmployees();
+            } else {
+                errorMsg.classList.remove('hidden');
+                document.getElementById('gatekeeper-code').value = '';
+                document.getElementById('gatekeeper-code').focus();
+            }
+        }
+
+        function checkEnter(event) {
+            if (event.key === "Enter") {
+                verifyCode();
+            }
+        }
+
+        // --- CORE SCRIPT FIREBASE & TABLE ---
         async function fetchEmployees() {
             try {
                 const response = await fetch(firebaseURL);
@@ -139,7 +202,6 @@
                 const status = emp.status || "Kontrak";
                 const tanggal = emp.tanggal_masuk ? new Date(emp.tanggal_masuk) : new Date();
 
-                // Tema badge putih mewah (Soft translucent style)
                 const badgeClass = status.toLowerCase() === 'tetap' 
                     ? 'bg-emerald-50 text-emerald-600 border border-emerald-200/60' 
                     : 'bg-amber-50 text-amber-600 border border-amber-200/60';
@@ -214,8 +276,6 @@
             btnReset.classList.add('hidden');
             renderTable(allEmployees);
         }
-
-        fetchEmployees();
     </script>
 </body>
 </html>
