@@ -1,6 +1,6 @@
 <?php
 // Skrip Koneksi & Pencarian Firebase REST API
-$firebaseURL = "https://NAMA-PROYEK-ANDA-default-rtdb.firebaseio.com/"; // <-- GANTI DENGAN URL FIREBASE ANDA
+$firebaseURL = "https://karyawan-3a1e8-default-rtdb.firebaseio.com/"; // <-- GANTI DENGAN URL FIREBASE ANDA
 $searchQuery = isset($_GET['search']) ? trim($_GET['search']) : '';
 $results = [];
 
