@@ -97,7 +97,7 @@
                         <tr class="bg-slate-50/70 border-b border-slate-100 text-slate-500 text-xs font-bold uppercase tracking-wider">
                             <th class="py-4 px-6">Karyawan</th>
                             <th class="py-4 px-6">NIK</th>
-                            <th class="py-4 px-6">Posisi & Dep</th>
+                            <th class="py-4 px-6">Posisi & Tempat tugas</th>
                             <th class="py-4 px-6">Tanggal Masuk</th>
                             <th class="py-4 px-6">Status</th>
                         </tr>
@@ -207,7 +207,7 @@
                 const nama = emp.nama || "Tanpa Nama";
                 const nik = emp.nik || "-";
                 const jabatan = emp.jabatan || "-";
-                const departemen = emp.departemen || "-";
+                const departemen = emp.location || "-";
                 const status = emp.status || "Kontrak";
                 const tanggal = emp.tanggal_masuk ? new Date(emp.tanggal_masuk) : new Date();
 
