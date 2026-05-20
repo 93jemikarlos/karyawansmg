@@ -21,7 +21,6 @@
         .luxury-shadow {
             box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.05);
         }
-        /* Mengaburkan konten utama sebelum login sukses */
         .blur-content {
             filter: blur(8px);
             pointer-events: none;
@@ -29,10 +28,10 @@
         }
     </style>
 </head>
-<body class="min-h-screen text-slate-800 p-4 md:p-8 relative">
+<body class="min-h-screen text-slate-800 p-3 md:p-8 relative">
 
     <div id="gatekeeper-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/10 backdrop-blur-xl transition-all duration-500">
-        <div class="bg-white rounded-2xl p-8 max-w-sm w-full border border-slate-200/80 shadow-2xl text-center">
+        <div class="bg-white rounded-2xl p-6 md:p-8 max-w-sm w-full border border-slate-200/80 shadow-2xl text-center">
             <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4 border border-blue-100 shadow-sm">
                 <i class="fa-solid fa-shield-halved"></i>
             </div>
@@ -51,7 +50,7 @@
             </div>
             
             <p id="error-message" class="text-xs font-semibold text-red-500 mb-4 hidden">
-                <i class="fa-solid fa-circle-exclamation mr-1"></i> Kode akses salah, silakan coba lagi.
+                <i class="fa-solid fa-circle-exclamation mr-1"></i> Kode akses salah.
             </p>
 
             <button onclick="verifyCode()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-3 rounded-xl shadow-lg shadow-blue-500/10 transition-all">
@@ -61,37 +60,38 @@
     </div>
 
     <div id="main-portal-content" class="max-w-6xl mx-auto blur-content transition-all duration-700">
-        <header class="mb-10 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-4">
+        <header class="mb-6 md:mb-10 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-3">
             <div>
-                <h1 class="text-3xl md:text-4xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-900">
+                <h1 class="text-2xl md:text-4xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-900">
                     <i class="fa-solid fa-id-card-clip mr-2 text-blue-600"></i>HR Portal
                 </h1>
-                <p class="text-sm text-slate-500 mt-1 font-medium tracking-wide">Manajemen & Pencarian Riwayat Karyawan Eksekutif</p>
+                <p class="text-xs md:text-sm text-slate-500 mt-0.5 font-medium tracking-wide">Manajemen & Pencarian Riwayat Karyawan Eksekutif</p>
             </div>
-            <div id="connection-status" class="text-xs font-semibold px-4 py-2 rounded-full bg-amber-50 text-amber-600 border border-amber-200 shadow-sm flex items-center gap-2">
+            <div id="connection-status" class="text-[11px] md:text-xs font-semibold px-3 py-1.5 rounded-full bg-amber-50 text-amber-600 border border-amber-200 shadow-sm flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> Connecting to Firebase...
             </div>
         </header>
 
-        <div class="luxury-card rounded-2xl p-5 mb-8 luxury-shadow">
-            <div class="flex flex-col md:flex-row gap-4">
+        <div class="luxury-card rounded-2xl p-4 md:p-5 mb-6 md:mb-8 luxury-shadow">
+            <div class="flex flex-col md:flex-row gap-3">
                 <div class="relative flex-1">
                     <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-base"></i>
                     <input 
                         type="text" 
                         id="search-input"
-                        placeholder="Cari berdasarkan Nama, NIK, Jabatan, atau Departemen..." 
-                        class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 pl-12 pr-4 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all shadow-inner"
+                        placeholder="Cari Nama, NIK, Jabatan, Departemen..." 
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm md:text-base text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all shadow-inner"
                     >
                 </div>
-                <button onclick="clearSearch()" id="btn-reset" class="hidden bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold px-6 py-3.5 rounded-xl transition-all items-center justify-center border border-slate-200">
+                <button onclick="clearSearch()" id="btn-reset" class="hidden bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold px-5 py-3 rounded-xl text-sm transition-all items-center justify-center border border-slate-200">
                     Reset
                 </button>
             </div>
         </div>
 
         <div class="luxury-card rounded-2xl overflow-hidden luxury-shadow">
-            <div class="overflow-x-auto">
+            
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-50/70 border-b border-slate-100 text-slate-500 text-xs font-bold uppercase tracking-wider">
@@ -106,10 +106,13 @@
                         </tbody>
                 </table>
             </div>
+
+            <div id="employee-cards-body" class="block md:hidden p-3 space-y-3">
+                </div>
             
-            <div class="bg-slate-50/50 px-6 py-4 border-t border-slate-100 text-xs font-medium text-slate-500 flex justify-between items-center">
+            <div class="bg-slate-50/50 px-5 py-4 border-t border-slate-100 text-xs font-medium text-slate-500 flex justify-between items-center">
                 <div id="total-employees">Menghitung karyawan...</div>
-                <div class="tracking-wider uppercase text-[10px] text-slate-400 font-bold">Sistem HR v2.1</div>
+                <div class="tracking-wider uppercase text-[9px] text-slate-400 font-bold">Sistem HR v2.1</div>
             </div>
         </div>
     </div>
@@ -121,17 +124,14 @@
         // --- SISTEM LOGIN / GATEKEEPER ---
         function verifyCode() {
             const inputCode = document.getElementById('gatekeeper-code').value;
-            const correctCode = "smg99"; // <-- KODE AKSES ANDA
+            const correctCode = "smg99";
             const overlay = document.getElementById('gatekeeper-overlay');
             const mainContent = document.getElementById('main-portal-content');
             const errorMsg = document.getElementById('error-message');
 
             if(inputCode === correctCode) {
-                // Efek transisi menutup form login
                 overlay.classList.add('opacity-0', 'invisible', 'scale-95');
                 mainContent.classList.remove('blur-content');
-                
-                // Baru mulai mengambil data dari Firebase setelah login berhasil
                 fetchEmployees();
             } else {
                 errorMsg.classList.remove('hidden');
@@ -141,12 +141,10 @@
         }
 
         function checkEnter(event) {
-            if (event.key === "Enter") {
-                verifyCode();
-            }
+            if (event.key === "Enter") { verifyCode(); }
         }
 
-        // --- CORE SCRIPT FIREBASE & TABLE ---
+        // --- AMBIL DATA FIREBASE ---
         async function fetchEmployees() {
             try {
                 const response = await fetch(firebaseURL);
@@ -159,38 +157,49 @@
                     }));
                     
                     const statusDiv = document.getElementById('connection-status');
-                    statusDiv.className = "text-xs font-semibold px-4 py-2 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 shadow-sm flex items-center gap-2";
+                    statusDiv.className = "text-[11px] md:text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 shadow-sm flex items-center gap-2";
                     statusDiv.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Firebase Live Connected`;
                     
-                    renderTable(allEmployees);
+                    renderLayout(allEmployees);
                 } else {
-                    document.getElementById('employee-table-body').innerHTML = `
-                        <tr><td colspan="5" class="py-16 text-center text-slate-400 font-medium">Database Firebase terhubung, tetapi tidak ada data ditemukan.</td></tr>
-                    `;
-                    document.getElementById('total-employees').innerHTML = `Menampilkan <b>0</b> karyawan`;
+                    showEmptyState();
                 }
             } catch (error) {
                 console.error("Gagal memuat data:", error);
-                document.getElementById('employee-table-body').innerHTML = `
-                    <tr><td colspan="5" class="py-16 text-center text-red-500 font-medium">Gagal terhubung ke Firebase. Periksa URL atau aturan database (.read: true)</td></tr>
+                const errorHTML = `
+                    <div class="py-12 text-center text-red-500 font-medium text-sm">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl mb-2 block"></i>
+                        Gagal terhubung ke Firebase. Periksa konfigurasi Rules database.
+                    </div>
                 `;
+                document.getElementById('employee-table-body').innerHTML = `<tr><td colspan="5">${errorHTML}</td></tr>`;
+                document.getElementById('employee-cards-body').innerHTML = errorHTML;
             }
         }
 
-        function renderTable(data) {
+        function showEmptyState() {
+            const emptyHTML = `
+                <div class="py-12 text-center text-slate-400 font-medium text-sm">
+                    <i class="fa-regular fa-folder-open text-3xl mb-2 block text-slate-300"></i>
+                    Tidak ada data riwayat karyawan ditemukan.
+                </div>
+            `;
+            document.getElementById('employee-table-body').innerHTML = `<tr><td colspan="5">${emptyHTML}</td></tr>`;
+            document.getElementById('employee-cards-body').innerHTML = emptyHTML;
+            document.getElementById('total-employees').innerHTML = `Menampilkan <b>0</b> karyawan`;
+        }
+
+        // --- RENDER DUA DISPLAY UTAMA ---
+        function renderLayout(data) {
             const tableBody = document.getElementById('employee-table-body');
+            const cardsBody = document.getElementById('employee-cards-body');
             const totalDiv = document.getElementById('total-employees');
+            
             tableBody.innerHTML = '';
+            cardsBody.innerHTML = '';
 
             if(data.length === 0) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="py-16 text-center">
-                            <div class="text-slate-300 mb-3"><i class="fa-regular fa-folder-open text-5xl"></i></div>
-                            <p class="text-slate-400 font-medium">Tidak ada data riwayat karyawan ditemukan</p>
-                        </td>
-                    </tr>`;
-                totalDiv.innerHTML = `Menampilkan <b>0</b> karyawan`;
+                showEmptyState();
                 return;
             }
 
@@ -202,14 +211,16 @@
                 const status = emp.status || "Kontrak";
                 const tanggal = emp.tanggal_masuk ? new Date(emp.tanggal_masuk) : new Date();
 
-                const badgeClass = status.toLowerCase() === 'tetap' 
-                    ? 'bg-emerald-50 text-emerald-600 border border-emerald-200/60' 
-                    : 'bg-amber-50 text-amber-600 border border-amber-200/60';
-
                 const dateOptions = { day: '2-digit', month: 'short', year: 'numeric' };
                 const formattedDate = tanggal.toLocaleDateString('id-ID', dateOptions);
 
-                const row = `
+                const isTetap = status.toLowerCase() === 'tetap';
+                const badgeColor = isTetap 
+                    ? 'bg-emerald-50 text-emerald-600 border-emerald-200/60' 
+                    : 'bg-amber-50 text-amber-600 border-amber-200/60';
+
+                // 1. GENERATE FORMAT TABEL (DESKTOP)
+                const rowHTML = `
                     <tr class="hover:bg-slate-50/60 transition-colors group">
                         <td class="py-4 px-6 whitespace-nowrap">
                             <div class="flex items-center gap-3">
@@ -231,18 +242,56 @@
                             <i class="fa-regular fa-calendar text-slate-400 mr-2"></i>${formattedDate}
                         </td>
                         <td class="py-4 px-6 whitespace-nowrap">
-                            <span class="px-2.5 py-1 rounded-lg text-xs font-bold border ${badgeClass} shadow-sm inline-block">
+                            <span class="px-2.5 py-1 rounded-lg text-xs font-bold border ${badgeColor} shadow-sm inline-block">
                                 ${status}
                             </span>
                         </td>
                     </tr>
                 `;
-                tableBody.innerHTML += row;
+                tableBody.innerHTML += rowHTML;
+
+                // 2. GENERATE FORMAT KARTU VERTIKAL (HP - TIDAK ADA SCROLL SAMPING)
+                const cardHTML = `
+                    <div class="bg-white border border-slate-100 rounded-xl p-4 shadow-sm space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-50 pb-2">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 font-bold text-xs uppercase flex items-center justify-center border border-slate-100">
+                                    ${nama.substring(0, 2)}
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 text-sm">${nama}</h4>
+                                    <p class="text-[10px] text-slate-400 font-mono">ID: ${emp.id}</p>
+                                </div>
+                            </div>
+                            <span class="px-2 py-0.5 rounded-md text-[10px] font-bold border ${badgeColor}">
+                                ${status}
+                            </span>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-y-2 gap-x-1 text-xs">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block font-medium">NIK</span>
+                                <span class="font-mono text-slate-700 font-semibold">${nik}</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 block font-medium">Tanggal Masuk</span>
+                                <span class="text-slate-600 font-medium"><i class="fa-regular fa-calendar text-slate-400 mr-1"></i>${formattedDate}</span>
+                            </div>
+                            <div class="col-span-2">
+                                <span class="text-[10px] text-slate-400 block font-medium">Jabatan & Departemen</span>
+                                <span class="text-slate-800 font-semibold">${jabatan}</span>
+                                <span class="text-indigo-600 font-medium bg-indigo-50/50 px-1.5 py-0.5 rounded text-[10px] inline-block ml-1">${departemen}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                cardsBody.innerHTML += cardHTML;
             });
 
             totalDiv.innerHTML = `Menampilkan <b>${data.length}</b> karyawan`;
         }
 
+        // --- ENGINE PENCARIAN REALTIME ---
         const searchInput = document.getElementById('search-input');
         const btnReset = document.getElementById('btn-reset');
 
@@ -268,13 +317,13 @@
                        departemen.includes(query);
             });
 
-            renderTable(filtered);
+            renderLayout(filtered);
         });
 
         function clearSearch() {
             searchInput.value = '';
             btnReset.classList.add('hidden');
-            renderTable(allEmployees);
+            renderLayout(allEmployees);
         }
     </script>
 </body>
