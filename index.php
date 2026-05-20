@@ -57,7 +57,7 @@
                         </tr>
                     </thead>
                     <tbody id="employee-table-body" class="divide-y divide-slate-800/60">
-                        </tbody>
+                    </tbody>
                 </table>
             </div>
             
@@ -68,9 +68,9 @@
         </div>
     </div>
 
-    <script {timestamp}>
-        // 1. GANTI DENGAN URL FIREBASE REALTIME DATABASE ANDA
-        const firebaseURL = "https://karyawan-3a1e8-default-rtdb.firebaseio.com/"; 
+    <script>
+        // 1. URL FIREBASE SUDAH DIPERBAIKI (Ditambahkan node utama dan .json)
+        const firebaseURL = "https://karyawan-3a1e8-default-rtdb.firebaseio.com/riwayat_karyawan.json"; 
 
         let allEmployees = [];
 
@@ -93,6 +93,12 @@
                     statusDiv.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Firebase Live Connected`;
                     
                     renderTable(allEmployees);
+                } else {
+                    // Jika database terhubung tapi kosong
+                    document.getElementById('employee-table-body').innerHTML = `
+                        <tr><td colspan="5" class="py-16 text-center text-slate-400">Database Firebase terhubung, tetapi tidak ada data ditemukan.</td></tr>
+                    `;
+                    document.getElementById('total-employees').innerHTML = `Menampilkan <b>0</b> karyawan`;
                 }
             } catch (error) {
                 console.error("Gagal memuat data:", error);
@@ -121,37 +127,45 @@
             }
 
             data.forEach(emp => {
-                const badgeClass = emp.status.toLowerCase() === 'tetap' 
+                // Antisipasi jika ada data properti yang kosong/null di Firebase
+                const nama = emp.nama || "Tanpa Nama";
+                const nik = emp.nik || "-";
+                const jabatan = emp.jabatan || "-";
+                const departemen = emp.departemen || "-";
+                const status = emp.status || "Kontrak";
+                const tanggal = emp.tanggal_masuk ? new Date(emp.tanggal_masuk) : new Date();
+
+                const badgeClass = status.toLowerCase() === 'tetap' 
                     ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
                     : 'bg-amber-500/10 text-amber-400 border border-amber-500/20';
 
                 // Format tanggal sederhana
                 const dateOptions = { day: '2-digit', month: 'short', year: 'numeric' };
-                const formattedDate = new Date(emp.tanggal_masuk).toLocaleDateString('id-ID', dateOptions);
+                const formattedDate = tanggal.toLocaleDateString('id-ID', dateOptions);
 
                 const row = `
                     <tr class="hover:bg-white/[0.02] transition-colors group">
                         <td class="py-5 px-6 whitespace-nowrap">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-sm uppercase">
-                                    ${emp.nama.substring(0, 2)}
+                                    ${nama.substring(0, 2)}
                                 </div>
                                 <div>
-                                    <div class="font-semibold text-slate-200 group-hover:text-blue-400 transition-colors">${emp.nama}</div>
+                                    <div class="font-semibold text-slate-200 group-hover:text-blue-400 transition-colors">${nama}</div>
                                     <div class="text-xs text-slate-500">ID: ${emp.id}</div>
                                 </div>
                             </div>
                         </td>
-                        <td class="py-5 px-6 whitespace-nowrap text-sm text-slate-300 font-mono">${emp.nik}</td>
+                        <td class="py-5 px-6 whitespace-nowrap text-sm text-slate-300 font-mono">${nik}</td>
                         <td class="py-5 px-6 whitespace-nowrap">
-                            <div class="text-sm font-medium text-slate-200">${emp.jabatan}</div>
-                            <div class="text-xs text-indigo-400/80">${emp.departemen}</div>
+                            <div class="text-sm font-medium text-slate-200">${jabatan}</div>
+                            <div class="text-xs text-indigo-400/80">${departemen}</div>
                         </td>
                         <td class="py-5 px-6 whitespace-nowrap text-sm text-slate-400">
                             <i class="fa-regular fa-calendar text-slate-500 mr-1.5"></i>${formattedDate}
                         </td>
                         <td class="py-5 px-6 whitespace-nowrap">
-                            <span class="px-2.5 py-1 rounded-md text-xs font-semibold ${badgeClass}">${emp.status}</span>
+                            <span class="px-2.5 py-1 rounded-md text-xs font-semibold ${badgeClass}">${status}</span>
                         </td>
                     </tr>
                 `;
@@ -175,12 +189,17 @@
                 btnReset.classList.add('hidden');
             }
 
-            const filtered = allEmployees.filter(emp => 
-                emp.nama.toLowerCase().includes(query) ||
-                emp.nik.toLowerCase().includes(query) ||
-                emp.jabatan.toLowerCase().includes(query) ||
-                emp.departemen.toLowerCase().includes(query)
-            );
+            const filtered = allEmployees.filter(emp => {
+                const nama = (emp.nama || "").toLowerCase();
+                const nik = (emp.nik || "").toLowerCase();
+                const jabatan = (emp.jabatan || "").toLowerCase();
+                const departemen = (emp.departemen || "").toLowerCase();
+
+                return nama.includes(query) || 
+                       nik.includes(query) || 
+                       jabatan.includes(query) || 
+                       departemen.includes(query);
+            });
 
             renderTable(filtered);
         });
