@@ -79,7 +79,7 @@
                     <input 
                         type="text" 
                         id="search-input"
-                        placeholder="Cari Nama, NIK, Jabatan, Departemen..." 
+                        placeholder="Cari Nama, NIK, Jabatan, Tempat Tugas..." 
                         class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm md:text-base text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all shadow-inner"
                     >
                 </div>
@@ -189,7 +189,7 @@
             document.getElementById('total-employees').innerHTML = `Menampilkan <b>0</b> karyawan`;
         }
 
-        // --- RENDER DUA DISPLAY UTAMA ---
+        // --- RENDER DISPLAY UTAMA ---
         function renderLayout(data) {
             const tableBody = document.getElementById('employee-table-body');
             const cardsBody = document.getElementById('employee-cards-body');
@@ -207,7 +207,10 @@
                 const nama = emp.nama || "Tanpa Nama";
                 const nik = emp.nik || "-";
                 const jabatan = emp.jabatan || "-";
-                const departemen = emp.location || "-";
+                
+                // DI SINI PERBAIKANNYA: Menyesuaikan dengan Key "Tempat_Tugas" asli dari Firebase
+                const departemen = emp.Tempat_Tugas || "-"; 
+                
                 const status = emp.status || "Kontrak";
                 const tanggal = emp.tanggal_masuk ? new Date(emp.tanggal_masuk) : new Date();
 
@@ -250,7 +253,7 @@
                 `;
                 tableBody.innerHTML += rowHTML;
 
-                // 2. GENERATE FORMAT KARTU VERTIKAL (HP - TIDAK ADA SCROLL SAMPING)
+                // 2. GENERATE FORMAT KARTU VERTIKAL (HP)
                 const cardHTML = `
                     <div class="bg-white border border-slate-100 rounded-xl p-4 shadow-sm space-y-3">
                         <div class="flex items-center justify-between border-b border-slate-50 pb-2">
@@ -278,7 +281,7 @@
                                 <span class="text-slate-600 font-medium"><i class="fa-regular fa-calendar text-slate-400 mr-1"></i>${formattedDate}</span>
                             </div>
                             <div class="col-span-2">
-                                <span class="text-[10px] text-slate-400 block font-medium">Jabatan & Departemen</span>
+                                <span class="text-[10px] text-slate-400 block font-medium">Jabatan & Tempat Tugas</span>
                                 <span class="text-slate-800 font-semibold">${jabatan}</span>
                                 <span class="text-indigo-600 font-medium bg-indigo-50/50 px-1.5 py-0.5 rounded text-[10px] inline-block ml-1">${departemen}</span>
                             </div>
@@ -309,7 +312,9 @@
                 const nama = (emp.nama || "").toLowerCase();
                 const nik = (emp.nik || "").toLowerCase();
                 const jabatan = (emp.jabatan || "").toLowerCase();
-                const departemen = (emp.departemen || "").toLowerCase();
+                
+                // DI SINI JUGA DISESUAIKAN: Pencarian membaca properti "Tempat_Tugas"
+                const departemen = (emp.Tempat_Tugas || "").toLowerCase(); 
 
                 return nama.includes(query) || 
                        nik.includes(query) || 
